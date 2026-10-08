@@ -1,0 +1,6 @@
+{
+  "name": "Ortodox Tewahido and Economy",
+  "description": "Professional platform connecting Orthodox Christians: Upwork/Fiverr-style freelance gigs, jobs, marketplace, B2B wholesale, and services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

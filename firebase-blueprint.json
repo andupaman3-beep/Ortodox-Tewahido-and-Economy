@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account and profile information on the Orthodox Tewahido & Economy platform",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "fullName": { "type": "string" },
+        "username": { "type": "string" },
+        "primaryRole": { "type": "string" },
+        "secondaryRoles": { "type": "string" },
+        "profession": { "type": "string" },
+        "businessName": { "type": "string" },
+        "businessCategory": { "type": "string" },
+        "location": { "type": "string" },
+        "phone": { "type": "string" },
+        "bio": { "type": "string" },
+        "skills": { "type": "string" },
+        "telegramHandle": { "type": "string" },
+        "profilePhotoUrl": { "type": "string" },
+        "verificationStatus": { "type": "string" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "email", "fullName", "primaryRole"]
+    },
+    "Gig": {
+      "title": "Gig",
+      "description": "Freelance gig, job vacancy, or contract work listing",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employerId": { "type": "string" },
+        "employerName": { "type": "string" },
+        "employerVerified": { "type": "boolean" },
+        "title": { "type": "string" },
+        "amharicTitle": { "type": "string" },
+        "category": { "type": "string" },
+        "location": { "type": "string" },
+        "salaryRange": { "type": "string" },
+        "employmentType": { "type": "string" },
+        "experienceLevel": { "type": "string" },
+        "description": { "type": "string" },
+        "deadline": { "type": "string" },
+        "projectType": { "type": "string" },
+        "budgetAmount": { "type": "number" },
+        "deliveryDays": { "type": "integer" },
+        "skillsRequired": { "type": "string" },
+        "proposalsCount": { "type": "integer" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "employerId", "employerName", "title", "category"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Marketplace product listing posted by verified/orthodox sellers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sellerId": { "type": "string" },
+        "sellerName": { "type": "string" },
+        "sellerVerified": { "type": "boolean" },
+        "title": { "type": "string" },
+        "amharicTitle": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "location": { "type": "string" },
+        "condition": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "isAvailable": { "type": "boolean" },
+        "deliveryInfo": { "type": "string" },
+        "isFeatured": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "sellerId", "sellerName", "title", "price", "category"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles indexed by authenticated user ID"
+    },
+    "/gigs/{gigId}": {
+      "schema": "Gig",
+      "description": "Public gigs and employment opportunities"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Public marketplace product listings"
+    }
+  }
+}

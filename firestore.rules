@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUserProfile(data) {
+      return data.userId is string &&
+             data.userId == request.auth.uid &&
+             data.email is string && data.email.size() <= 200 &&
+             data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 150 &&
+             data.primaryRole is string && data.primaryRole.size() <= 50 &&
+             (!('username' in data) || (data.username is string && data.username.size() <= 100)) &&
+             (!('profession' in data) || (data.profession is string && data.profession.size() <= 150)) &&
+             (!('businessName' in data) || (data.businessName is string && data.businessName.size() <= 150)) &&
+             (!('location' in data) || (data.location is string && data.location.size() <= 100)) &&
+             (!('phone' in data) || (data.phone is string && data.phone.size() <= 50)) &&
+             (!('bio' in data) || (data.bio is string && data.bio.size() <= 2000)) &&
+             (!('skills' in data) || (data.skills is string && data.skills.size() <= 1000)) &&
+             (!('telegramHandle' in data) || (data.telegramHandle is string && data.telegramHandle.size() <= 100)) &&
+             (!('profilePhotoUrl' in data) || (data.profilePhotoUrl is string && data.profilePhotoUrl.size() <= 1000)) &&
+             (!('verificationStatus' in data) || (data.verificationStatus is string && data.verificationStatus.size() <= 50)) &&
+             (!('createdAt' in data) || (data.createdAt is timestamp && data.createdAt <= request.time)) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    function isValidGig(data) {
+      return data.id is string && data.id.size() >= 1 &&
+             data.employerId is string && data.employerId == request.auth.uid &&
+             data.employerName is string && data.employerName.size() >= 1 && data.employerName.size() <= 150 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+             data.category is string && data.category.size() <= 100 &&
+             (!('location' in data) || (data.location is string && data.location.size() <= 100)) &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 5000)) &&
+             (!('budgetAmount' in data) || (data.budgetAmount is number && data.budgetAmount >= 0)) &&
+             (!('isActive' in data) || data.isActive is bool) &&
+             (!('createdAt' in data) || (data.createdAt is timestamp && data.createdAt <= request.time)) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    function isValidProduct(data) {
+      return data.id is string && data.id.size() >= 1 &&
+             data.sellerId is string && data.sellerId == request.auth.uid &&
+             data.sellerName is string && data.sellerName.size() >= 1 && data.sellerName.size() <= 150 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+             data.category is string && data.category.size() <= 100 &&
+             data.price is number && data.price >= 0 &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 5000)) &&
+             (!('location' in data) || (data.location is string && data.location.size() <= 100)) &&
+             (!('isAvailable' in data) || data.isAvailable is bool) &&
+             (!('createdAt' in data) || (data.createdAt is timestamp && data.createdAt <= request.time)) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      allow update: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /gigs/{gigId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidGig(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.employerId == request.auth.uid && isValidGig(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.employerId == request.auth.uid;
+    }
+
+    match /products/{productId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidProduct(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.sellerId == request.auth.uid && isValidProduct(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.sellerId == request.auth.uid;
+    }
+  }
+}
